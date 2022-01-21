@@ -1,0 +1,109 @@
+@import url('edFonts.css');
+
+body {
+    font-family: 'Acme';
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+    background: #f1f1f1;
+    color: #444;
+    overflow-x: hidden;
+}
+
+.body {
+    width: 100%;
+    height: 100vh;
+    background: #f1f1f1 url(../img/img1.jpg) no-repeat center center / cover;
+    overflow: hidden;
+}
+
+.active{
+    background-color: blue;
+    color: white !important;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    font-family: 'Fredoka One';
+}
+
+p {
+    font-family: 'Roboto';
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.center {
+    text-align: center;
+}
+
+.h-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 0 3rem;
+}
+
+.h-container h1 {
+    font-weight: bolder;
+    margin: 0.4rem;
+}
+
+.h-container h1 {
+    font-size: 3rem;
+}
+
+/* Cursor */
+.txt-type > .txt {
+    border-right: 0.2rem solid #444;
+}
+
+@media(min-width: 1200px) {
+    h1 {
+        font-size: 3rem;
+    }
+}
+
+@media(max-width: 880px) {
+    .h-container {
+        padding: 0 1rem;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+}
+
+@media(max-width: 500px) {
+    h1 {
+        font-size: 2rem;
+    }
+}
+
+.p-img {
+    width: 100%;
+    height: 50vh;
+    border-radius: 50%;
+}
+
+ul li a:hover {
+    background-color: #f1f1f1;
+    color: #000;
+}
+
+.mb-50 {
+    margin-bottom: 50px;
+}
+
+.justify {
+    text-align: justify;
+}
+
+.s-link a {
+    font-size: 25px;
+    padding: 8px;
+    margin: 8px;
+}

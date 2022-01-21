@@ -1,0 +1,16 @@
+
+# HTID:16075446: DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES BELOW
+php_value display_errors 1
+# DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES ABOVE HTID:16075446:
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+
+#RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+#RewriteRule ^([^\.]+)$ $1.html [NC,L]
+
+RewriteRule ^([a-zA-Z0-9_-]+)$ index.php?req=$1
+RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)$ index.php?req=$1&vtype=$2
+RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)$ index.php?req=$1&vtype=$2&pin=$3
+RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)$ index.php?req=$1&vtype=$2&pin=$3&url=$4&fname=$5
