@@ -19,6 +19,7 @@
         <div class="col-md-4 center" style="margin-top: 10%; background-color: white; padding: 30px;">
             <form id="uploadResltFrm" enctype="multipart/form-data">
                 <input type="hidden" name="uType" value="<?php echo @$_SESSION['admin']; ?>">
+                <input type="hidden" name="dep" value="<?php echo @$_SESSION['dep']; ?>">
 
                 <select name="course" class="form-control" required>
                     <option value="">-- select course --</option>

@@ -116,6 +116,7 @@ if (isset($_POST['dl_Studt'])) {
 if (isset($_POST['uType'])) {
     $uType = protect::check($conn, $_POST['uType']);
     $course = protect::check($conn, $_POST['course']);
+    $dep = protect::check($conn, $_POST['dep']);
     if($_FILES["filename"]["name"] != '') {
         $test = explode('.', $_FILES["filename"]["name"]);
         $ext = end($test);
@@ -127,16 +128,98 @@ if (isset($_POST['uType'])) {
                 $arg = "WHERE course='$course'";
                 $q = crud::select('records', $arg, $conn);
                 if (mysqli_num_rows($q) == 0) {
+                    # insert
                     $examnounce = rand(100, 999);
-                    $examphash = '0000000000000000000';
+                    $examphash = '000000000000000000000';
                     $examnhash = md5(md5_file($location). $examnounce);
-                    if (crud::insert('records', "course='$course', uType='$uType', filename='$name', nounce='$examnounce', phash='$examphash', nhash='$examnhash', status='Approve', comments=''", $conn)) {
-                        // $audnounce =
+                    if (crud::insert('records', "course='$course', dep='$dep', uType='$uType', filename='$name', nounce='$examnounce', phash='$examphash', nhash='$examnhash', status='Approve', comments=''", $conn)) {
+                        $audnounce = $examnounce*2;
+                        $audnhash = md5(md5_file($location). $audnounce);
+                        if (crud::insert('records', "course='$course', dep='$dep', uType='auditor', filename='$name', nounce='$audnounce', phash='$examnhash', nhash='$audnhash', status='Approve', comments=''", $conn)) {
+                            $eonounce = $audnounce*2;
+                            $eonhash = md5(md5_file($location). $eonounce);
+                            if (crud::insert('records', "course='$course', dep='$dep', uType='exam-officer', filename='$name', nounce='$eonounce', phash='$audnhash', nhash='$eonhash', status='Approve', comments=''", $conn)) {
+                                echo 'Uploaded successfully...';
+                            }
+                        }
                     }
                 } else {
                     # update
+                    $examnounce = rand(100, 999);
+                    $examphash = '000000000000000000000';
+                    $examnhash = md5(md5_file($location). $examnounce);
+                    if (crud::update('records', "filename='$name', nounce='$examnounce', phash='$examphash', nhash='$examnhash', status='Approve', comments='' WHERE course='$course' AND uType='$uType' AND dep='$dep'", $conn)) {
+                        $audnounce = $examnounce*2;
+                        $audnhash = md5(md5_file($location). $audnounce);
+                        if (crud::update('records', "filename='$name', nounce='$audnounce', phash='$examnhash', nhash='$audnhash', status='Approve', comments='' WHERE course='$course' AND uType='auditor' AND dep='$dep'", $conn)) {
+                            $eonounce = $audnounce*2;
+                            $eonhash = md5(md5_file($location). $eonounce);
+                            if (crud::update('records', "filename='$name', nounce='$eonounce', phash='$audnhash', nhash='$eonhash', status='Approve', comments='' WHERE course='$course' AND uType='exam-officer' AND dep='$dep'", $conn)) {
+                                echo 'Updated successfully...';
+                            }
+                        }
+                    }
                 }
-            } else {}
+            } else {
+                # update
+                $q1 = crud::select('records', "WHERE course='$course' AND uType='$uType' AND dep='$dep'", $conn);
+                $r1 = mysqli_fetch_array($q1);
+                $dnounce = $r1['nounce'];
+                $dnhash = md5(md5_file($location). $dnounce);
+
+                if (crud::update('records', "filename='$name', nhash='$dnhash' WHERE course='$course' AND uType='$uType' AND dep='$dep'", $conn)) {
+                    echo 'Updated successfully...';
+                }
+            }
+        }
+    }
+}
+
+# fetch request
+if (isset($_POST['request']) && $_POST['request'] == 'getexUpldCrs') {
+    
+    $uReqq = protect::check($conn, $_POST['spec']);
+    $dep = @$_SESSION['dep'];
+    $uType = @$_SESSION['admin'];
+    if ($uReqq == 'examiner') {
+        $eml = $_SESSION['email'];
+        $q = crud::select('user', "WHERE email='$eml'", $conn);
+        $r = mysqli_fetch_array($q);
+        $spec = $r['course'];
+
+        $crs = explode(',', $spec);
+        foreach ($crs as $course) {
+            $q = crud::select('records', "WHERE course='$course' AND dep='$dep' AND uType='$uType' ORDER BY course ASC", $conn);
+            $i=0;
+            while ($rr = mysqli_fetch_array($q)) {
+                $i++;
+                $depId = $rr['dep'];
+                $q2 = crud::select('department', "WHERE id='$depId'", $conn);
+                $r2 = mysqli_fetch_array($q2);
+                ?>
+                <tr>
+                    <td><?php echo $i; ?></td>
+                    <td><?php echo $rr['course']; ?></td>
+                    <td><?php echo $r2['depName']; ?></td>
+                </tr>
+                <?php
+            }
+        }
+    } else {
+        $q = crud::select('records', "WHERE dep='$dep' AND uType='$uType' ORDER BY course ASC", $conn);
+        $i=0;
+        while ($rr = mysqli_fetch_array($q)) {
+            $i++;
+            $depId = $rr['dep'];
+            $q2 = crud::select('department', "WHERE id='$depId'", $conn);
+            $r2 = mysqli_fetch_array($q2);
+            ?>
+            <tr>
+                <td><?php echo $i; ?></td>
+                <td><?php echo $rr['course']; ?></td>
+                <td><?php echo $r2['depName']; ?></td>
+            </tr>
+            <?php
         }
     }
 }

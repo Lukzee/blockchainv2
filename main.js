@@ -73,6 +73,9 @@ $('#uploadResltFrm').submit(function(event){
         processData: false,
         success: function(res) {
             $('#uploadResltFrm')[0].reset();
+            getReq('getexUpldCrs', '#exUpldCrs', 'examiner');
+            getReq('getexUpldCrs', '#othersUpldCrs', 'others');
+            alert(res);
         },
         dataType: 'text'
     });
@@ -101,6 +104,25 @@ function gUser(utype) {
 gUser('getExaminer');
 gUser('getAuditor');
 gUser('getExamOfficer');
+
+// get Request
+function getReq(req, des, spec){
+
+    $.ajax({
+        method: 'POST',
+        url: root()+'process.php',
+        data: { 
+            request: req,
+            spec: spec
+        },
+        success: function(res) {
+            $(des).html(res);
+        },
+        dataType: 'text'
+    });
+}
+getReq('getexUpldCrs', '#exUpldCrs', 'examiner');
+getReq('getexUpldCrs', '#othersUpldCrs', 'others');
 
 // delete items
 function dellstud(studnt_ID, nm, tbl, clmn) {
