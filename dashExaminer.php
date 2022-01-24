@@ -27,14 +27,14 @@ if (@$_SESSION['admin'] != "examiner") {
 			</div>
 		</div>
 		<div class="col-md-6">
-			<div class="body" style="height: 435px; background-color: rgba(0,0,0,0.1);"></div><br>
+			<div class="" id="excel_data" style="height: 435px; background-color: rgba(0,0,0,0.1); overflow-y:scroll;"></div><br>
 
 			<div class="btn-3 center">
 				<button class="btn btn-primary form-control" onclick="tgglPopUp();">Upload Result</button>
 			</div>
 		</div>
 		<div class="col-md-3">
-			<div style="height: 435px; background-color: rgba(0,0,0,0.1);"></div><br>
+			<div id="otherRecCon" style="height: 435px; background-color: rgba(0,0,0,0.1); padding: 20px; overflow-y:scroll;"></div><br>
 
 			<a class="btn btn-primary form-control" href="<?php echo root; ?>out"></i> Log out</a>
 		</div>

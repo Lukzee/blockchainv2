@@ -170,6 +170,94 @@ function valImg() {
     }
 }
 
+// Read Excel file
+function readXLXSfile(myFilename, cname, dname) {
+    fetch(myFilename)
+    .then(res => res.arrayBuffer())
+    .then(data => {
+        var work_book = XLSX.read(data, {type:'array'});
+
+        var sheet_name = work_book.SheetNames;
+
+        var sheet_data = XLSX.utils.sheet_to_json(work_book.Sheets[sheet_name[0]], {header:1});
+
+        if(sheet_data.length > 0)
+        {
+            var table_output = '<table class="table table-striped table-bordered">';
+
+            for(var row = 0; row < sheet_data.length; row++)
+            {
+
+                table_output += '<tr>';
+
+                for(var cell = 0; cell < sheet_data[row].length; cell++)
+                {
+
+                    let sheetRRowData = sheet_data[row][cell] || '';
+                    if(row == 0)
+                    {
+
+                        table_output += '<th class="center">'+sheetRRowData+'</th>';
+
+                    }
+                    else
+                    {
+
+                        table_output += '<td>'+sheetRRowData+'</td>';
+
+                    }
+
+                }
+
+                table_output += '</tr>';
+
+            }
+
+            table_output += '</table>';
+
+            document.getElementById('excel_data').innerHTML = table_output;
+            fetchOtherRec(cname, dname);
+        }
+
+    })
+}
+
+// other file records
+function fetchOtherRec(cname, dname) {
+    $.ajax({
+        method: 'POST',
+        url: root()+'process.php',
+        data: {
+            fechtFileRec: 1,
+            cname: cname,
+            dname: dname
+        },
+        success: function(res) {
+            $('#otherRecCon').html(res);
+            $('#courseTitle').val(cname);
+        },
+        dataType: 'text'
+    });
+}
+
+$('#updUpldFrmm').submit(function(event){
+    event.preventDefault();
+    $.ajax({
+        method: 'POST',
+        url: root()+'process.php',
+        data: new FormData(this),
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(res) {
+            $('#statuss').val('');
+            $('#commentt').val('');
+            alert(res);
+        },
+        dataType: 'text'
+    });
+});
+
 // // update requests
 // function updReq(req, requesterID, datte, qsup, it_id) {
 //     let ques = confirm('are you sure to '+req+' this request?'),

@@ -27,14 +27,28 @@ if (@$_SESSION['admin'] != "exam-officer") {
 			</div>
 		</div>
 		<div class="col-md-6">
-			<div class="body" style="height: 435px; background-color: rgba(0,0,0,0.1);"></div><br>
+			<div class="" id="excel_data" style="height: 435px; background-color: rgba(0,0,0,0.1); overflow-y:scroll;"></div><br>
 
 			<div class="btn-3 center">
 				<button class="btn btn-primary form-control" onclick="tgglPopUp();">Upload Result</button>
 			</div>
 		</div>
 		<div class="col-md-3">
-			<div style="height: 435px; background-color: rgba(0,0,0,0.1);"></div><br>
+			<div style="height: 435px; background-color: rgba(0,0,0,0.1); padding: 20px;">
+				<h5 class="center">Feedback</h5>
+				<form id="updUpldFrmm">
+					<input type="hidden" name="courseTitle" id="courseTitle">
+					<select name="statuss" id="statuss" class="form-control" required>
+						<option value=""> -- select feedback --</option>
+						<option value="Approve">Approve</option>
+						<option value="Reject">Reject</option>
+					</select><br>
+
+					<textarea name="commentt" id="commentt" class="form-control" required placeholder="Write your comments here..."></textarea><br>
+
+					<input type="submit" value="Submit" class="btn btn-primary form-control">
+				</form>
+			</div><br>
 
 			<a class="btn btn-primary form-control" href="<?php echo root; ?>out"></i> Log out</a>
 		</div>

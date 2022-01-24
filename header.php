@@ -24,12 +24,21 @@
                 <select name="course" class="form-control" required>
                     <option value="">-- select course --</option>
                     <?php
-                    $eml = $_SESSION['email'];
-                    $q = crud::select('user', "WHERE email='$eml'", $conn);
-                    $r = mysqli_fetch_array($q);
-                    $crs = explode(',', $r['course']);
-                    foreach ($crs as $course) {
-                        ?><option value="<?php echo $course; ?>"><?php echo $course; ?></option><?php
+                    if (@$_SESSION['admin'] == 'examiner') {
+                        $eml = $_SESSION['email'];
+                        $q = crud::select('user', "WHERE email='$eml'", $conn);
+                        $r = mysqli_fetch_array($q);
+                        $crs = explode(',', $r['course']);
+                        foreach ($crs as $course) {
+                            $course = trim($course);
+                            ?><option value="<?php echo $course; ?>"><?php echo $course; ?></option><?php
+                        }
+                    } else {
+                        $uType = $_SESSION['admin'];
+                        $q = crud::select('records', "WHERE dep='".$_SESSION['dep']."' AND uType='$uType' ORDER BY course ASC", $conn);
+                        while ($r = mysqli_fetch_array($q)) {
+                            ?><option value="<?php echo $r['course']; ?>"><?php echo $r['course']; ?></option><?php
+                        }
                     }
                     ?>
                 </select><br>

@@ -107,3 +107,23 @@ ul li a:hover {
     padding: 8px;
     margin: 8px;
 }
+
+.ind-warn, .ind-succ, .ind-dang {
+    display: inline-block;
+    width: 30px;
+    height: 5px;
+}
+
+.ind-warn {
+    background-color: yellow;
+}
+.ind-succ {
+    background-color: blue;
+}
+.ind-dang {
+    background-color: red;
+}
+
+textarea {
+    resize: none;
+}

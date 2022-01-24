@@ -135,10 +135,10 @@ if (isset($_POST['uType'])) {
                     if (crud::insert('records', "course='$course', dep='$dep', uType='$uType', filename='$name', nounce='$examnounce', phash='$examphash', nhash='$examnhash', status='Approve', comments=''", $conn)) {
                         $audnounce = $examnounce*2;
                         $audnhash = md5(md5_file($location). $audnounce);
-                        if (crud::insert('records', "course='$course', dep='$dep', uType='auditor', filename='$name', nounce='$audnounce', phash='$examnhash', nhash='$audnhash', status='Approve', comments=''", $conn)) {
+                        if (crud::insert('records', "course='$course', dep='$dep', uType='auditor', filename='$name', nounce='$audnounce', phash='$examnhash', nhash='$audnhash', status='', comments=''", $conn)) {
                             $eonounce = $audnounce*2;
                             $eonhash = md5(md5_file($location). $eonounce);
-                            if (crud::insert('records', "course='$course', dep='$dep', uType='exam-officer', filename='$name', nounce='$eonounce', phash='$audnhash', nhash='$eonhash', status='Approve', comments=''", $conn)) {
+                            if (crud::insert('records', "course='$course', dep='$dep', uType='exam-officer', filename='$name', nounce='$eonounce', phash='$audnhash', nhash='$eonhash', status='', comments=''", $conn)) {
                                 echo 'Uploaded successfully...';
                             }
                         }
@@ -151,10 +151,10 @@ if (isset($_POST['uType'])) {
                     if (crud::update('records', "filename='$name', nounce='$examnounce', phash='$examphash', nhash='$examnhash', status='Approve', comments='' WHERE course='$course' AND uType='$uType' AND dep='$dep'", $conn)) {
                         $audnounce = $examnounce*2;
                         $audnhash = md5(md5_file($location). $audnounce);
-                        if (crud::update('records', "filename='$name', nounce='$audnounce', phash='$examnhash', nhash='$audnhash', status='Approve', comments='' WHERE course='$course' AND uType='auditor' AND dep='$dep'", $conn)) {
+                        if (crud::update('records', "filename='$name', nounce='$audnounce', phash='$examnhash', nhash='$audnhash', status='', comments='' WHERE course='$course' AND uType='auditor' AND dep='$dep'", $conn)) {
                             $eonounce = $audnounce*2;
                             $eonhash = md5(md5_file($location). $eonounce);
-                            if (crud::update('records', "filename='$name', nounce='$eonounce', phash='$audnhash', nhash='$eonhash', status='Approve', comments='' WHERE course='$course' AND uType='exam-officer' AND dep='$dep'", $conn)) {
+                            if (crud::update('records', "filename='$name', nounce='$eonounce', phash='$audnhash', nhash='$eonhash', status='', comments='' WHERE course='$course' AND uType='exam-officer' AND dep='$dep'", $conn)) {
                                 echo 'Updated successfully...';
                             }
                         }
@@ -175,7 +175,7 @@ if (isset($_POST['uType'])) {
     }
 }
 
-# fetch request
+# fetch uploaded results
 if (isset($_POST['request']) && $_POST['request'] == 'getexUpldCrs') {
     
     $uReqq = protect::check($conn, $_POST['spec']);
@@ -188,16 +188,21 @@ if (isset($_POST['request']) && $_POST['request'] == 'getexUpldCrs') {
         $spec = $r['course'];
 
         $crs = explode(',', $spec);
+        $i=0;
         foreach ($crs as $course) {
+            $course = trim($course);
+            $i++;
             $q = crud::select('records', "WHERE course='$course' AND dep='$dep' AND uType='$uType' ORDER BY course ASC", $conn);
-            $i=0;
-            while ($rr = mysqli_fetch_array($q)) {
-                $i++;
-                $depId = $rr['dep'];
-                $q2 = crud::select('department', "WHERE id='$depId'", $conn);
-                $r2 = mysqli_fetch_array($q2);
+            $rr = mysqli_fetch_array($q);
+            $depId = $rr['dep'];
+            $q2 = crud::select('department', "WHERE id='$depId'", $conn);
+            $r2 = mysqli_fetch_array($q2);
+            $flnm = $rr['filename'];
+            $cnm = $rr['course'];
+
+            if (!empty($rr['course'])) {
                 ?>
-                <tr>
+                <tr style="cursor: pointer" onclick="readXLXSfile('upload/<?php echo $flnm; ?>', '<?php echo $cnm; ?>', '<?php echo $depId; ?>');">
                     <td><?php echo $i; ?></td>
                     <td><?php echo $rr['course']; ?></td>
                     <td><?php echo $r2['depName']; ?></td>
@@ -205,7 +210,7 @@ if (isset($_POST['request']) && $_POST['request'] == 'getexUpldCrs') {
                 <?php
             }
         }
-    } else {
+    } elseif ($uReqq == 'others') {
         $q = crud::select('records', "WHERE dep='$dep' AND uType='$uType' ORDER BY course ASC", $conn);
         $i=0;
         while ($rr = mysqli_fetch_array($q)) {
@@ -213,8 +218,10 @@ if (isset($_POST['request']) && $_POST['request'] == 'getexUpldCrs') {
             $depId = $rr['dep'];
             $q2 = crud::select('department', "WHERE id='$depId'", $conn);
             $r2 = mysqli_fetch_array($q2);
+            $flnm = $rr['filename'];
+            $cnm = $rr['course'];
             ?>
-            <tr>
+            <tr style="cursor: pointer" onclick="readXLXSfile('upload/<?php echo $flnm; ?>', '<?php echo $cnm; ?>', '<?php echo $depId; ?>');">
                 <td><?php echo $i; ?></td>
                 <td><?php echo $rr['course']; ?></td>
                 <td><?php echo $r2['depName']; ?></td>
@@ -224,4 +231,64 @@ if (isset($_POST['request']) && $_POST['request'] == 'getexUpldCrs') {
     }
 }
 
+# other records
+if (isset($_POST['fechtFileRec'])) {
+    $cname = protect::check($conn, $_POST['cname']);
+    $dname = protect::check($conn, $_POST['dname']);
+    $q0 = crud::select('records', "WHERE course='$cname' AND dep='$dname' AND uType='examiner'", $conn);
+    $rr0 = mysqli_fetch_array($q0);
+
+    $q = crud::select('records', "WHERE course='$cname' AND dep='$dname' AND uType !='examiner'", $conn);
+    while ($rr = mysqli_fetch_array($q)) {
+        $myfil = '';
+        if ($rr['status'] == '') {
+            $ind = 'ind-warn';
+        } elseif ($rr['status'] == 'Approve') {
+            $ind = 'ind-succ';
+        } elseif ($rr['status'] == 'Reject') {
+            $ind = 'ind-dang';
+        }
+
+        $ddhash = md5(md5_file('upload/'.$rr['filename']). $rr0['nounce']);
+
+        if ($rr0['nhash'] != $ddhash) {
+            $ind = 'ind-dang';
+            $myfil = '<a href="upload/'.$rr['filename'].'" download="'.$rr['filename'].'">Download file <i class="fa fa-download"></i></a>';
+        }
+        ?>
+        <h5 class="center"><?php echo $rr['uType']; ?></h5>
+        <p><strong>Status: </strong><span class="<?php echo $ind; ?>"></span></p>
+        <p><strong>Comment: </strong><span><?php echo $rr['comments']; ?></span></p>
+        <p><strong>Update: </strong><span><?php echo $myfil; ?></span></p>
+        <?php
+    }
+    ?>
+    <h5 class="center">Keys</h5>
+    <p class="center">
+        <strong>Pending: </strong>
+        <span class="ind-warn"></span> &nbsp;
+
+        <strong>Approved: </strong>
+        <span class="ind-succ"></span> &nbsp;
+
+        <strong>Rejected/Changed: </strong>
+        <span class="ind-dang"></span>
+    </p>
+    <?php
+}
+
+# update result status
+if (isset($_POST['courseTitle'])) {
+    $courseTitle = protect::check($conn, $_POST['courseTitle']);
+    $statuss = protect::check($conn, $_POST['statuss']);
+    $commentt = protect::check($conn, $_POST['commentt']);
+    $dep = @$_SESSION['dep'];
+    $uType = @$_SESSION['admin'];
+
+    if (!(empty($courseTitle) && empty($statuss) && empty($commentt))) {
+        if (crud::update('records', "status='$statuss', comments='$commentt' WHERE course='$courseTitle' AND dep='$dep' AND uType='$uType'", $conn)) {
+            echo 'Success';
+        }
+    }
+}
 ?>
