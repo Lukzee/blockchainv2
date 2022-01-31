@@ -223,7 +223,7 @@ if (isset($_POST['request']) && $_POST['request'] == 'getexUpldCrs') {
             ?>
             <tr style="cursor: pointer" onclick="readXLXSfile('upload/<?php echo $flnm; ?>', '<?php echo $cnm; ?>', '<?php echo $depId; ?>');">
                 <td><?php echo $i; ?></td>
-                <td><?php echo $rr['course']; ?></td>
+                <td><a href="<?php echo root.'upload/'.$flnm; ?>" download="<?php echo root.'upload/'.$flnm; ?>"><i class="fa fa-download"></i></a> <?php echo $rr['course']; ?></td>
                 <td><?php echo $r2['depName']; ?></td>
             </tr>
             <?php
@@ -231,7 +231,7 @@ if (isset($_POST['request']) && $_POST['request'] == 'getexUpldCrs') {
     }
 }
 
-# other records
+# other records for examiner
 if (isset($_POST['fechtFileRec'])) {
     $cname = protect::check($conn, $_POST['cname']);
     $dname = protect::check($conn, $_POST['dname']);
@@ -274,6 +274,29 @@ if (isset($_POST['fechtFileRec'])) {
         <strong>Rejected/Changed: </strong>
         <span class="ind-dang"></span>
     </p>
+    <?php
+}
+
+# other records for auditor/exam-officer
+if (isset($_POST['fechtOthsRec'])) {
+    $cname = protect::check($conn, $_POST['cname']);
+    $dname = protect::check($conn, $_POST['dname']);
+    $q0 = crud::select('records', "WHERE course='$cname' AND dep='$dname' AND uType='examiner'", $conn);
+    $rr0 = mysqli_fetch_array($q0);
+
+    $q = crud::select('records', "WHERE course='$cname' AND dep='$dname' AND uType='".@$_SESSION['admin']."'", $conn);
+    $rr = mysqli_fetch_array($q);
+    $myfil = '';
+    $ddhash = md5(md5_file('upload/'.$rr['filename']). $rr0['nounce']);
+
+    if ($rr0['nhash'] != $ddhash) {
+        $myfil = 'Changed';
+    }
+    ?>
+    <h5 class="center"><?php echo $rr['course']; ?></h5>
+    <p><strong>Status: </strong><span><?php echo @$rr['status']; ?></span></p>
+    <p><strong>Comment: </strong><span><?php echo $rr['comments']; ?></span></p>
+    <p><strong>Update: </strong><span><?php echo $myfil; ?></span></p>
     <?php
 }
 

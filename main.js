@@ -217,12 +217,13 @@ function readXLXSfile(myFilename, cname, dname) {
 
             document.getElementById('excel_data').innerHTML = table_output;
             fetchOtherRec(cname, dname);
+            fetchStatsRec(cname, dname);
         }
 
     })
 }
 
-// other file records
+// other file records for examiner
 function fetchOtherRec(cname, dname) {
     $.ajax({
         method: 'POST',
@@ -235,6 +236,23 @@ function fetchOtherRec(cname, dname) {
         success: function(res) {
             $('#otherRecCon').html(res);
             $('#courseTitle').val(cname);
+        },
+        dataType: 'text'
+    });
+}
+
+// other file records for auditor/exam-officer
+function fetchStatsRec(cname, dname) {
+    $.ajax({
+        method: 'POST',
+        url: root()+'process.php',
+        data: {
+            fechtOthsRec: 1,
+            cname: cname,
+            dname: dname
+        },
+        success: function(res) {
+            $('#otherRRes').html(res);
         },
         dataType: 'text'
     });

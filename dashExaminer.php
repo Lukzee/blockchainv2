@@ -34,8 +34,8 @@ if (@$_SESSION['admin'] != "examiner") {
 			</div>
 		</div>
 		<div class="col-md-3">
-			<div id="otherRecCon" style="height: 435px; background-color: rgba(0,0,0,0.1); padding: 20px; overflow-y:scroll;"></div><br>
-
-			<a class="btn btn-primary form-control" href="<?php echo root; ?>out"></i> Log out</a>
+			<a class="btn btn-primary form-control" href="<?php echo root; ?>out"></i> Log out</a><br><br>
+			
+			<div id="otherRecCon" style="height: 435px; background-color: rgba(0,0,0,0.1); padding: 20px; overflow-y:scroll;"></div>
 		</div>
 	</div>

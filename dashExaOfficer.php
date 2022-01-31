@@ -34,6 +34,8 @@ if (@$_SESSION['admin'] != "exam-officer") {
 			</div>
 		</div>
 		<div class="col-md-3">
+			<a class="btn btn-primary form-control" href="<?php echo root; ?>out"></i> Log out</a><br><br>
+
 			<div style="height: 435px; background-color: rgba(0,0,0,0.1); padding: 20px;">
 				<h5 class="center">Feedback</h5>
 				<form id="updUpldFrmm">
@@ -48,8 +50,9 @@ if (@$_SESSION['admin'] != "exam-officer") {
 
 					<input type="submit" value="Submit" class="btn btn-primary form-control">
 				</form>
-			</div><br>
 
-			<a class="btn btn-primary form-control" href="<?php echo root; ?>out"></i> Log out</a>
+				<br>
+				<div id="otherRRes"></div>
+			</div>
 		</div>
 	</div>
